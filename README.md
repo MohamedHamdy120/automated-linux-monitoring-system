@@ -48,6 +48,3 @@ Logs are stored in the `/logs` folder and look like this:
 [2026-04-06 21:00:01] /dev/sda2        50G   15G   33G  31% / 
 [2026-04-06 21:00:01] Warning: the disk usage exceeds 20%
 
-## License
-
-This project is open-source and free to use.
