@@ -1,13 +1,17 @@
 #!/bin/bash
-dir="logs"
+
+BASE_DIR="$HOME/github/automated-linux-monitoring-system"
+dir="$BASE_DIR/logs"
 
 if [ ! -d "$dir" ]; then 
-mkdir "$dir"
-echo "The directory "$dir" has been created"
+mkdir -p "$dir"
+echo "The directory $dir has been created"
 fi
+
 TIMESTAMP=$(date +%Y%m%d_%H%M)
 FILENAME="${TIMESTAMP}.log"
-touch "$HOME/github/automated-linux-monitoring-system/logs/${FILENAME}"
+# Updated to use the variable
+touch "$dir/${FILENAME}"
 
 log_with_label() {
 
@@ -41,8 +45,9 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] $line "
 done
 fi
 
-} >> "$HOME/github/automated-linux-monitoring-system/logs/${FILENAME}" 
+} >> "$dir/${FILENAME}" 
 }
+
 log_with_label "Server date" "date"
 log_with_label "Server uptime" "uptime"
 log_with_label "Disk uasge" "df -h | head -1 && df -h | grep '/dev/sda2'"
