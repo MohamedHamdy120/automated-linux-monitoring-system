@@ -22,7 +22,14 @@ eval "$@" | while IFS= read -r line; do
 echo "[ $(date '+%Y-%m-%d %H %M %S') ] $line "
 done >> "$dir/${FILENAME}"
 }
+disk_usage_alert(){
+local usage="$1"
+if [ "$usage" -gt 10 ]; then 
+echo "Warning: The disk usage exceeds 10%" >> "$dir/${FILENAME}"
+fi
+}
 log_with_label "Server date" "date"
 log_with_label "Server uptime" "uptime"
-log_with_label "Disk uasge" "df -h | head -1 && df -h | grep '/dev/sda2'"
 log_with_label "Memeory usage" "free -h"
+log_with_label "Disk uasge" "df -h /"
+disk_usage_alert "$(df -h / | awk 'NR==2 {print $5}' | tr -d '%')"
