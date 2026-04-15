@@ -24,21 +24,21 @@ done >> "$dir/${FILENAME}"
 } 
 monitor_mem_usage(){
 echo "============================Memory usage=========================" >> "$dir/${FILENAME}"
-local mem_total=$(grep MemTotal /proc/meminfo | awk '{print $2}')
-local mem_available=$(grep MemAvailable /proc/meminfo | awk '{print $2}')
+local mem_total=$(grep MemTotal /host/proc/meminfo | awk '{print $2}')
+local mem_available=$(grep MemAvailable /host/proc/meminfo | awk '{print $2}')
 local mem_used=$((mem_total - mem_available))
 local usage=$((mem_used * 100 / mem_total))
-echo "[ $(date '+%Y-%m-%d %H %M %S') ] the memory usage is $usage%" >> "$dir/${FILENAME}"
+echo "[ $(date '+%Y-%m-%d %H %M %S') ] The memory usage is $usage%" >> "$dir/${FILENAME}"
 }
 disk_usage_alert(){
 local usage="$1"
-if [ "$usage" -gt 10 ]; then 
-echo "Warning: The disk usage exceeds 10%" >> "$dir/${FILENAME}"
+if [ "$usage" -gt 80 ]; then 
+echo "Warning: The disk usage exceeds 80%" >> "$dir/${FILENAME}"
 fi
 }
 
-log_with_label "Server date" "date"
-log_with_label "Server uptime" "uptime"
+#log_with_label "Server date" "date"
+log_with_label "Server avgerage load" "cat /host/proc/loadavg"
 monitor_mem_usage
-log_with_label "Disk usage" "df -h /"
-disk_usage_alert "$(df -h / | awk 'NR==2 {print $5}' | tr -d '%')"
+log_with_label "Disk usage" "df -h /host/root"
+disk_usage_alert "$(df -h /host/root | awk 'NR==2 {print $5}' | tr -d '%')"
