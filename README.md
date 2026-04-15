@@ -1,50 +1,149 @@
 # Automated Linux Monitoring System
 
-A lightweight, automated Bash script designed to monitor essential Linux server metrics. This tool captures system health data and logs it into timestamped files for easy auditing and troubleshooting.
+A lightweight Bash-based monitoring agent designed to collect host-level system metrics. The tool can run natively or inside a Docker container while still accessing real host resources.
+
+This project demonstrates how to monitor system metrics by leveraging Linux internals and controlled container namespace sharing.
+
+---
+
+## Overview
+
+By default, containers are isolated and cannot access host system metrics. This project shows how to:
+
+* Access host-level metrics from within a container
+* Use Linux virtual filesystems such as `/proc` and `/sys`
+* Build a simple and effective monitoring solution using Bash
+
+---
 
 ## Features
 
-* **Automated Log Management:** Automatically creates a `logs/` directory and generates unique, timestamped files (e.g., `20260406_2100.log`).
-* **Real-Time Metrics:** Logs server date, uptime, and memory usage (`free -h`).
-* **Disk Usage Alerts:** Specifically monitors the `/dev/sda2` partition. If usage exceeds **20%**, a warning is automatically flagged in the log.
-* **Timestamped Entries:** Every logged metric includes a precise `[YYYY-MM-DD HH:MM:SS]` timestamp.
+* Automatic log management
 
-## Installation & Setup
+  * Creates a `logs/` directory if it does not exist
+  * Generates timestamped log files
 
-1.  **Prepare the directory:**
-    Ensure the script is placed in the following path (or update the `BASE_DIR` variable in the script):
-    `~/github/automated-linux-monitoring-system/`
+* Host system monitoring
 
-2.  **Make the script executable:**
-    ```bash
-    chmod +x monitor.sh
-    ```
+  * CPU load average via `/proc/loadavg`
+  * Memory usage calculated from `/proc/meminfo`
+  * Disk usage via `df -h` on the host filesystem
 
-3.  **Run manually:**
-    ```bash
-    ./monitor.sh
-    ```
+* Timestamped logging
+
+  * Each log entry includes a precise timestamp
+
+* Disk usage alert
+
+  * Triggers a warning if usage exceeds 80%
+
+---
+
+## Running with Docker
+
+### Build the image
+
+```bash
+docker build -t automated-monitoring-image .
+```
+
+### Run the container (host monitoring mode)
+
+```bash
+docker run -it \
+  --pid=host \
+  -v /proc:/host/proc:ro \
+  -v /sys:/host/sys:ro \
+  -v /:/host/root:ro \
+  automated-monitoring-image
+```
+
+---
+
+## How It Works
+
+* `--pid=host` allows access to host process and `/proc` information
+* `/host/proc` provides access to host runtime metrics (memory, load)
+* `/host/sys` exposes kernel and hardware-related information
+* `/host/root` provides access to the host filesystem for disk monitoring
+
+Inside the container:
+
+* `/host/proc` → host metrics
+* `/host/sys` → kernel/system interface
+* `/host/root` → host filesystem
+
+---
+
+## Running Without Docker
+
+```bash
+chmod +x monitor.sh
+./monitor.sh
+```
+
+Ensure the script path matches:
+
+```bash
+~/github/automated-linux-monitoring-system/
+```
+
+---
 
 ## Automation with Cron
 
-To monitor your server continuously, set the script to run every 5 minutes:
+To run the script every 5 minutes:
 
-1.  Open your crontab:
-    ```bash
-    crontab -e
-    ```
-2.  Add this line at the bottom:
-    ```cron
-    */5 * * * * /bin/bash $HOME/github/automated-linux-monitoring-system/monitor.sh
-    ```
+```bash
+crontab -e
+```
 
-## Log Example
+Add the following:
 
-Logs are stored in the `/logs` folder and look like this:
+```cron
+*/5 * * * * /bin/bash $HOME/github/automated-linux-monitoring-system/monitor.sh
+```
+
+---
+
+## Example Log Output
 
 ```text
-==================='Disk usage'==================
-[2026-04-06 21:00:01] Filesystem      Size  Used Avail Use% Mounted on 
-[2026-04-06 21:00:01] /dev/sda2        50G   15G   33G  31% / 
-[2026-04-06 21:00:01] Warning: the disk usage exceeds 20%
+============================'Server average load'=========================
+[2026-04-15 12 00 01] 0.15 0.10 0.05 1/200 12345
 
+============================Memory usage=========================
+[2026-04-15 12 00 01] The memory usage is 37%
+
+============================'Disk usage'=========================
+[2026-04-15 12 00 01] Filesystem      Size  Used Avail Use% Mounted on
+[2026-04-15 12 00 01] /dev/sda1        50G   20G   30G  40% /
+```
+
+---
+
+## Notes
+
+* The script reads host metrics through mounted paths such as `/host/proc` and `/host/sys`
+* Disk monitoring is performed using `/host/root`
+* Avoid hardcoding device names such as `/dev/sda2`; use mount points instead
+
+---
+
+## Future Improvements
+
+* Continuous monitoring loop (daemon mode)
+* Alerting via external systems (email, webhooks)
+* Export metrics for Prometheus integration
+
+---
+
+## Conclusion
+
+This project demonstrates practical understanding of:
+
+* Linux
+* Docker
+* Host-level monitoring design patterns
+
+It serves as a foundation for building more advanced monitoring and observability tools.
