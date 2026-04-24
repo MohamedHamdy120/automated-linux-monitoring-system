@@ -1,8 +1,32 @@
 # Automated Linux Monitoring System
 
-A lightweight Bash-based monitoring agent designed to collect host-level system metrics. The tool can run natively or inside a Docker container while still accessing real host resources.
+A lightweight Bash-based monitoring agent designed to collect host-level system metrics.
 
-This project demonstrates how to monitor system metrics by leveraging Linux internals and controlled container namespace sharing.
+Project Evolution (Active Development):
+While this project started as a purely Bash-based automation tool, it is currently being refactored into a full-stack, cloud-native monitoring solution. This initiative is part of my effort to bridge the gap between low-level system infrastructure and modern backend development.
+
+Roadmap (In Progress)
+[x] Phase 1: Foundation (Completed)
+
+Bash-based metric collection (CPU, Memory, Disk).
+
+Structured logging and threshold-based alerting.
+
+Containerization with Docker (host namespace access).
+
+[ ] Phase 2: Backend Development (In Progress)
+
+Building a C# (ASP.NET Core) REST API to parse and serve system logs as JSON.
+
+Implementing SQL database integration for historical metrics analysis.
+
+[ ] Phase 3: Infrastructure as Code & Cloud (Planned)
+
+Infrastructure provisioning using Terraform (IaC).
+
+Automated deployment with CI/CD pipelines.
+
+Cloud-native deployment on Google Cloud Platform (GCP).
 
 ---
 
