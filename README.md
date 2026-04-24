@@ -1,36 +1,42 @@
 # Automated Linux Monitoring System
 
-A lightweight Bash-based monitoring agent designed to collect host-level system metrics.
+A lightweight Bash-based monitoring agent evolving into a full-stack, cloud-native observability platform. This project showcases the transition from simple host-level automation to a scalable architecture that integrates C# backend APIs, database persistence, and automated infrastructure deployment.
 
-Project Evolution (Active Development):
+
+## Project Evolution (Active Development)
 While this project started as a purely Bash-based automation tool, it is currently being refactored into a full-stack, cloud-native monitoring solution. This initiative is part of my effort to bridge the gap between low-level system infrastructure and modern backend development.
 
-Roadmap (In Progress)
-[x] Phase 1: Foundation (Completed)
+## Roadmap (In Progress)
+- [x] **Phase 1: Foundation (Completed)**
+  - Bash-based metric collection (CPU, Memory, Disk).
+  - Structured logging and threshold-based alerting.
+  - Containerization with Docker (host namespace access).
 
-Bash-based metric collection (CPU, Memory, Disk).
+- [ ] **Phase 2: Backend Development (In Progress)**
+  - Building a C# (ASP.NET Core) REST API to parse and serve system logs as JSON.
+  - Implementing SQL database integration for historical metrics analysis.
 
-Structured logging and threshold-based alerting.
+- [ ] **Phase 3: Infrastructure as Code & Cloud (Planned)**
+  - Infrastructure provisioning using Terraform (IaC).
+  - Automated deployment with CI/CD pipelines.
+  - Cloud-native deployment on Google Cloud Platform (GCP).
 
-Containerization with Docker (host namespace access).
+## Tech Stack
+- **Languages:** Bash, C# (ASP.NET Core - In Progress).
+- **Database:** SQL/Relational DB (Planned).
+- **DevOps & Infrastructure:** Docker, Terraform, Google Cloud Platform (GCP).
+- **Methodology:** DevOps, CI/CD pipelines, RESTful API design.
 
-[ ] Phase 2: Backend Development (In Progress)
-
-Building a C# (ASP.NET Core) REST API to parse and serve system logs as JSON.
-
-Implementing SQL database integration for historical metrics analysis.
-
-[ ] Phase 3: Infrastructure as Code & Cloud (Planned)
-
-Infrastructure provisioning using Terraform (IaC).
-
-Automated deployment with CI/CD pipelines.
-
-Cloud-native deployment on Google Cloud Platform (GCP).
+## Why this project?
+This project demonstrates my ability to:
+- Automate manual tasks using Linux scripting.
+- Design scalable backends using C#.
+- Manage infrastructure using Terraform.
+- Adopt DevOps best practices throughout the development lifecycle.
 
 ---
 
-## Overview
+## Overview of the completed phase 1
 
 By default, containers are isolated and cannot access host system metrics. This project shows how to:
 
@@ -151,23 +157,3 @@ Add the following:
 * The script reads host metrics through mounted paths such as `/host/proc` and `/host/sys`
 * Disk monitoring is performed using `/host/root`
 * Avoid hardcoding device names such as `/dev/sda2`; use mount points instead
-
----
-
-## Future Improvements
-
-* Continuous monitoring loop (daemon mode)
-* Alerting via external systems (email, webhooks)
-* Export metrics for Prometheus integration
-
----
-
-## Conclusion
-
-This project demonstrates practical understanding of:
-
-* Linux
-* Docker
-* Host-level monitoring design patterns
-
-It serves as a foundation for building more advanced monitoring and observability tools.
