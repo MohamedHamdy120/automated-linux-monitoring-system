@@ -12,7 +12,7 @@ While this project started as a purely Bash-based automation tool, it is current
   - Structured logging and threshold-based alerting.
   - Containerization with Docker (host namespace access).
 
-- [ ] **Phase 2: Backend Development (In Progress)**
+- [ ] **Phase 2: Backend Development (Completed/Active)**
   - Building a C# (ASP.NET Core) REST API to parse and serve system logs as JSON.
   - Implementing SQL database integration for historical metrics analysis.
 
@@ -46,6 +46,15 @@ By default, containers are isolated and cannot access host system metrics. This 
 
 ---
 
+## Overview of the completed phase 2
+
+Developing a .NET Minimal API to serve as a central hub for system metrics. This phase demonstrates how to:
+
+* Create a RESTful API endpoint to accept incoming telemetry data via HTTP POST
+* Implement JSON deserialization to process system metrics sent by the monitoring agent
+* Decouple the monitoring agent from data processing logic to ensure modularity==
+* Establish a structured communication protocol between the Bash agent and the .NET backend
+
 ## Features
 
 * Automatic log management
@@ -67,7 +76,33 @@ By default, containers are isolated and cannot access host system metrics. This 
 
   * Triggers a warning if usage exceeds 80%
 
+* API Metric Ingestion
+
+  * Exposes a RESTful endpoint for real-time telemetry reception
+  * Processes JSON payloads via HTTP POST requests
+  * Decouples data collection logic from backend processing
+
 ---
+
+## Running the Backend API
+
+The Backend API must be running on the host machine to accept incoming data from the monitoring agent.
+
+### Navigate to the API project directory
+```bash
+cd BackendProjects/LinuxMonitorApi
+```
+
+### Start the API
+```bash
+dotnet run
+```
+
+> **Note:**  
+> Ensure your application is configured to listen on all interfaces (e.g., `http://0.0.0.0:5125`) instead of just `localhost`, so it can accept connections from the Docker bridge network.
+
+---
+
 
 ## Running with Docker
 
@@ -104,6 +139,17 @@ Inside the container:
 * `/host/root` → host filesystem
 
 ---
+
+## API Connectivity and Docker Networking
+
+The system uses the default Docker bridge network to allow communication between the monitoring agent (inside the container) and the backend API (running on the host).
+
+### Connectivity Details
+* **Host Gateway:** The container communicates with the host machine using the Docker bridge gateway IP address.
+* **API Endpoint:** The monitoring agent is configured to send HTTP POST requests to:
+  `http://172.17.0.1:5125/api/metrics`
+
+*Note: Ensure your API is configured to listen on all interfaces (e.g., `http://0.0.0.0:5125`) rather than just `localhost` so it can accept connections coming from the Docker bridge network.*
 
 ## Running Without Docker
 
