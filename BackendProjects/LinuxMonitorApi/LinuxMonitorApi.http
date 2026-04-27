@@ -1,0 +1,6 @@
+@LinuxMonitorApi_HostAddress = http://localhost:5125
+
+GET {{LinuxMonitorApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
