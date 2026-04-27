@@ -1,2 +1,12 @@
+#Ignoring log files except for a sample
 logs/*.log
 !logs/sample.log
+
+# .NET
+bin/
+obj/
+*.db
+.vs/
+
+# System files
+.DS_Store

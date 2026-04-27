@@ -3,6 +3,10 @@
 BASE_DIR="$HOME/github/automated-linux-monitoring-system"
 dir="$BASE_DIR/logs"
 
+#varibales to send to api
+disk_usage=
+memory_usage= 
+
 if [ ! -d "$dir" ]; then 
 mkdir -p "$dir"
 echo "The directory $dir has been created"
@@ -28,13 +32,25 @@ local mem_total=$(grep MemTotal /host/proc/meminfo | awk '{print $2}')
 local mem_available=$(grep MemAvailable /host/proc/meminfo | awk '{print $2}')
 local mem_used=$((mem_total - mem_available))
 local usage=$((mem_used * 100 / mem_total))
+memory_usage="$usage"
 echo "[ $(date '+%Y-%m-%d %H %M %S') ] The memory usage is $usage%" >> "$dir/${FILENAME}"
 }
 disk_usage_alert(){
 local usage="$1"
+disk_usage="$1"
 if [ "$usage" -gt 80 ]; then 
 echo "Warning: The disk usage exceeds 80%" >> "$dir/${FILENAME}"
 fi
+}
+
+send_metrics_to_api(){
+
+local disk_usage="$1"
+local memory_usage="$2"
+
+curl -X POST http://172.17.0.1:5125/api/metrics \
+-H "Content-Type: application/json" \
+-d "{\"diskUsagePercentage\": $disk_usage, \"memoryUsagePercentage\": $memory_usage}" 
 }
 
 #log_with_label "Server date" "date"
@@ -42,3 +58,5 @@ log_with_label "Server avgerage load" "cat /host/proc/loadavg"
 monitor_mem_usage
 log_with_label "Disk usage" "df -h /host/root"
 disk_usage_alert "$(df -h /host/root | awk 'NR==2 {print $5}' | tr -d '%')"
+send_metrics_to_api "$disk_usage" "$memory_usage"
+
